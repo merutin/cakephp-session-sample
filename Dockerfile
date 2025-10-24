@@ -26,7 +26,7 @@ COPY cake2 /var/www/html/
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/app/tmp \
-    && chmod -R 775 /var/www/html/app/tmp
+    && chmod -R 777 /var/www/html/app/tmp
 
 # Configure Apache to point to CakePHP webroot
 ENV APACHE_DOCUMENT_ROOT /var/www/html/app/webroot
