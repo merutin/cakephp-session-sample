@@ -229,6 +229,7 @@
 	Configure::write('Session', array(
 		'defaults' => 'cache',
 		'handler' => array(
+			'engine' => 'CacheSession',
 			'config' => 'redis_session'
 		)
 	));
