@@ -6,11 +6,14 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
+    ca-certificates \
+    && update-ca-certificates \
     && docker-php-ext-install zip pdo pdo_mysql mysqli
 
 # Install Redis extension
-RUN pecl install redis-5.3.7 \
-    && docker-php-ext-enable redis
+RUN mkdir -p /usr/src/php/ext/redis \
+    && curl -k -fsSL https://github.com/phpredis/phpredis/archive/5.3.7.tar.gz | tar xvz -C /usr/src/php/ext/redis --strip 1 \
+    && docker-php-ext-install redis
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
