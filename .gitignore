@@ -2,6 +2,12 @@
 /cake2/app/tmp/
 /cake2/app/Config/database.php
 
+# CakePHP 5 specific
+/cake5/vendor/
+/cake5/tmp/
+/cake5/logs/
+/cake5/config/.env
+
 # IDE
 .idea/
 .vscode/

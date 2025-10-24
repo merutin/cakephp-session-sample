@@ -227,8 +227,9 @@
  * the cake shell command: cake schema create Sessions
  */
 	Configure::write('Session', array(
-		'defaults' => 'cache',
+		'defaults' => 'php',
 		'handler' => array(
+			'engine' => 'CacheSession',
 			'config' => 'redis_session'
 		)
 	));

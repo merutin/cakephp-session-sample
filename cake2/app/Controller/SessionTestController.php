@@ -20,9 +20,15 @@ class SessionTestController extends AppController {
 		// Store current timestamp
 		$this->Session->write('last_visit', date('Y-m-d H:i:s'));
 
+		// Debug info
+		$sessionConfig = Configure::read('Session');
+		$verifyCount = $this->Session->read('visit_count');
+		
 		$this->set('visit_count', $count);
 		$this->set('last_visit', $this->Session->read('last_visit'));
 		$this->set('session_id', session_id());
+		$this->set('sessionConfig', $sessionConfig);
+		$this->set('verifyCount', $verifyCount);
 	}
 
 	public function clear() {
