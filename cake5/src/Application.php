@@ -85,9 +85,7 @@ class Application extends BaseApplication
             ->add(new BodyParserMiddleware())
 
             // Session Middleware for handling sessions
-            ->add(new SessionMiddleware([
-                'defaults' => 'cache',
-            ]))
+            ->add(new SessionMiddleware(Configure::read('Session')))
 
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/5/en/security/csrf.html#cross-site-request-forgery-csrf-middleware

@@ -97,8 +97,13 @@ return [
 
     /*
      * Cache configuration for Redis
+     * Note: We need to include default cache to not override app.php completely
      */
     'Cache' => [
+        'default' => [
+            'className' => 'Cake\Cache\Engine\FileEngine',
+            'path' => CACHE,
+        ],
         'redis_session' => [
             'className' => 'Cake\Cache\Engine\RedisEngine',
             'prefix' => 'cake_session_',
