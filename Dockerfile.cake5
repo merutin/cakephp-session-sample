@@ -12,9 +12,10 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install zip pdo pdo_mysql mysqli intl \
     && docker-php-ext-configure intl
 
-# Install Redis extension
-RUN pecl install redis-6.0.2 \
-    && docker-php-ext-enable redis
+# Install Redis extension from source
+RUN mkdir -p /usr/src/php/ext/redis \
+    && curl -k -fsSL https://github.com/phpredis/phpredis/archive/6.0.2.tar.gz | tar xvz -C /usr/src/php/ext/redis --strip 1 \
+    && docker-php-ext-install redis
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
@@ -32,7 +33,7 @@ RUN chown -R www-data:www-data /var/www/html/tmp \
     && chmod -R 775 /var/www/html/logs
 
 # Configure Apache to point to CakePHP webroot
-ENV APACHE_DOCUMENT_ROOT /var/www/html/webroot
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/webroot
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
