@@ -13,6 +13,23 @@ services:
     networks:
       - cakephp-network
 
+  cake5:
+    build:
+      context: .
+      dockerfile: Dockerfile.cake5
+    ports:
+      - "8081:80"
+    volumes:
+      - ./cake5:/var/www/html
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DEBUG=true
+    networks:
+      - cakephp-network
+
   redis:
     image: redis:6-alpine
     ports:

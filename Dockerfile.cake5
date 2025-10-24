@@ -1,0 +1,47 @@
+FROM php:8.2-apache
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    zip \
+    unzip \
+    git \
+    libicu-dev \
+    ca-certificates \
+    && update-ca-certificates \
+    && docker-php-ext-install zip pdo pdo_mysql mysqli intl \
+    && docker-php-ext-configure intl
+
+# Install Redis extension
+RUN pecl install redis-6.0.2 \
+    && docker-php-ext-enable redis
+
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy CakePHP 5 application
+COPY cake5 /var/www/html/
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/tmp \
+    && chown -R www-data:www-data /var/www/html/logs \
+    && chmod -R 775 /var/www/html/tmp \
+    && chmod -R 775 /var/www/html/logs
+
+# Configure Apache to point to CakePHP webroot
+ENV APACHE_DOCUMENT_ROOT /var/www/html/webroot
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Configure Apache to allow .htaccess overrides
+RUN echo '<Directory ${APACHE_DOCUMENT_ROOT}>\n\
+    Options Indexes FollowSymLinks\n\
+    AllowOverride All\n\
+    Require all granted\n\
+</Directory>' > /etc/apache2/conf-available/cakephp.conf \
+    && a2enconf cakephp
+
+EXPOSE 80
