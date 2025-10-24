@@ -118,5 +118,8 @@ return [
         'handler' => [
             'config' => 'redis_session',
         ],
+        'cookie' => 'CAKEPHP',
+        'timeout' => 120, // 2 hours in minutes
+        'cookiePath' => '/',
     ],
 ];
