@@ -20,6 +20,9 @@ class SessionTestController extends AppController
     {
         $session = $this->request->getSession();
         
+        // Debug: Check session configuration
+        $sessionConfig = \Cake\Core\Configure::read('Session');
+        
         // Get current count from session
         $count = $session->read('visit_count');
         if ($count === null) {
@@ -32,9 +35,15 @@ class SessionTestController extends AppController
         // Save to session
         $session->write('visit_count', $count);
         
+        // Verify write
+        $verifyCount = $session->read('visit_count');
+        
         // Get session ID
         $sessionId = $session->id();
         
-        $this->set(compact('count', 'sessionId'));
+        // Get all session data for debugging
+        $allData = $session->read();
+        
+        $this->set(compact('count', 'sessionId', 'sessionConfig', 'verifyCount', 'allData'));
     }
 }

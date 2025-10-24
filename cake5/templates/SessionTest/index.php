@@ -79,6 +79,17 @@
             <div class="session-id"><?= h($sessionId) ?></div>
         </div>
         
+        <div class="info">
+            <strong>Debug Info:</strong>
+            <pre style="font-size: 12px; overflow-x: auto;">
+Session Config: <?= print_r($sessionConfig, true) ?>
+
+Verify Count: <?= h($verifyCount) ?>
+
+All Session Data: <?= print_r($allData, true) ?>
+            </pre>
+        </div>
+        
         <div class="note">
             <p>このページをリロードすると訪問回数がカウントアップされます。</p>
             <p>セッションデータはRedisに <code>cake_session_</code> というprefixで保存されています。</p>

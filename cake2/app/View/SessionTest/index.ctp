@@ -13,10 +13,19 @@
 				<td><?php echo h($visit_count); ?></td>
 			</tr>
 			<tr>
+				<th>Verify Count:</th>
+				<td><?php echo h($verifyCount); ?></td>
+			</tr>
+			<tr>
 				<th>Last Visit:</th>
 				<td><?php echo h($last_visit); ?></td>
 			</tr>
 		</table>
+		
+		<h3>Debug Information</h3>
+		<pre style="background: #f5f5f5; padding: 10px; border: 1px solid #ddd; overflow-x: auto;">
+Session Config: <?php echo print_r($sessionConfig, true); ?>
+		</pre>
 		
 		<p>
 			Refresh this page to increment the visit counter. 

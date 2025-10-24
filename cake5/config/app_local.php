@@ -119,8 +119,9 @@ return [
      * Session configuration - use Redis for session storage
      */
     'Session' => [
-        'defaults' => 'cache',
+        'defaults' => 'php',  // Use 'php' as base
         'handler' => [
+            'engine' => 'Cake\Http\Session\CacheSession',
             'config' => 'redis_session',
         ],
         'cookie' => 'CAKEPHP',
