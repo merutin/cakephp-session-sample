@@ -1,0 +1,14 @@
+# CakePHP specific
+/cake2/app/tmp/
+/cake2/app/Config/database.php
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
