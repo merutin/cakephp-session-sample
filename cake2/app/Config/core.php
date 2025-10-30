@@ -231,7 +231,12 @@
 		'handler' => array(
 			'engine' => 'CacheSession',
 			'config' => 'redis_session'
-		)
+		),
+		'cookie' => 'CAKEPHP',
+		'cookiePath' => '/',
+		'timeout' => 120,
+		'checkAgent' => false,
+		'useForwardsCompatibleTimeout' => true,
 	));
 
 /**
