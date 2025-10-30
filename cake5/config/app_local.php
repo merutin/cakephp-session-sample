@@ -116,16 +116,19 @@ return [
     ],
 
     /*
-     * Session configuration - use Redis for session storage
+     * Session configuration - use custom handler for CakePHP 2 compatibility
      */
     'Session' => [
-        'defaults' => 'php',  // Use 'php' as base
+        'defaults' => 'cache',
         'handler' => [
-            'engine' => 'Cake\Http\Session\CacheSession',
+            // 'engine' => 'App\Http\Session\Cake2CompatibleCacheSession',
             'config' => 'redis_session',
         ],
         'cookie' => 'CAKEPHP',
         'timeout' => 120, // 2 hours in minutes
         'cookiePath' => '/',
+        'ini' => [
+            'session.use_strict_mode' => 0, // Don't reject uninitialized session IDs
+        ],
     ],
 ];
