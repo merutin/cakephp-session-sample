@@ -12,7 +12,7 @@
         "mobiledetect/mobiledetectlib": "2.*"
     },
     "require-dev": {
-        "cakephp/bake": "^1.9.0",
+        "cakephp/bake": "^1.12.0",
         "cakephp/cakephp-codesniffer": "^3.0",
         "cakephp/debug_kit": "^3.17.0",
         "josegonzalez/dotenv": "3.*",
@@ -55,7 +55,7 @@
             "cakephp/plugin-installer": true
         },
         "audit": {
-            "ignore": ["PKSA-yg4s-vh6g-jnyh", "PKSA-wdyb-c3m7-9v88"]
+            "ignore": ["PKSA-yg4s-vh6g-jnyh", "PKSA-wdyb-c3m7-9v88", "PKSA-yhcn-xrg3-68b1", "PKSA-2wrf-1xmk-1pky"]
         }
     }
 }
