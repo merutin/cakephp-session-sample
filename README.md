@@ -1,10 +1,10 @@
 # cakephp-session-sample
 
-CakePHP 2とCakePHP 5でRedisセッションストレージを共有するサンプルアプリケーション
+CakePHP 2、CakePHP 3、CakePHP 5でRedisセッションストレージを共有するサンプルアプリケーション
 
 ## 概要
 
-このプロジェクトは、CakePHP 2.10.24とCakePHP 5.2を使用し、セッションデータをRedisに保存する環境をDocker Composeで構築します。両バージョンのCakePHPが同じRedisインスタンスを使用してセッションを共有できることを確認できます。
+このプロジェクトは、CakePHP 2.10.24、CakePHP 3.10、CakePHP 5.2を使用し、セッションデータをRedisに保存する環境をDocker Composeで構築します。3つのバージョンのCakePHPが同じRedisインスタンスを使用してセッションを共有できることを確認できます。
 
 ## 必要な環境
 
@@ -28,6 +28,12 @@ docker-compose up -d
 
 初回起動時はイメージのビルドに時間がかかります。
 
+**注意**: CakePHP 3コンテナの初回起動時に、Composerが依存パッケージをインストールするため、インターネット接続が必要です。コンテナのログで進捗を確認できます：
+
+```bash
+docker-compose logs -f cake3
+```
+
 ### 3. アプリケーションへのアクセス
 
 ブラウザで以下のURLにアクセスしてください：
@@ -35,6 +41,10 @@ docker-compose up -d
 #### CakePHP 2
 - メインページ: http://localhost:8080
 - セッションテストページ: http://localhost:8080/session_test
+
+#### CakePHP 3
+- メインページ: http://localhost:8082
+- セッションテストページ: http://localhost:8082/session-test
 
 #### CakePHP 5
 - メインページ: http://localhost:8081
@@ -45,28 +55,36 @@ docker-compose up -d
 ### Docker Compose サービス
 
 - **web**: PHP 7.4 + Apache環境でCakePHP 2を実行（ポート8080）
+- **cake3**: PHP 7.4 + Apache環境でCakePHP 3を実行（ポート8082）
 - **cake5**: PHP 8.2 + Apache環境でCakePHP 5を実行（ポート8081）
 - **redis**: Redis 6（セッションストレージ用）
 
 ### セッション設定
 
-両方のCakePHPアプリケーションが同じRedisインスタンスを使用してセッションを保存します。
+3つのCakePHPアプリケーションが同じRedisインスタンスを使用してセッションを保存します。
 
 #### CakePHP 2の設定
 - `cake2/app/Config/bootstrap.php`: Redisキャッシュエンジンの設定
 - `cake2/app/Config/core.php`: セッションハンドラーの設定
+
+#### CakePHP 3の設定
+- `cake3/config/app_local.php`: Redisキャッシュとセッションの設定
 
 #### CakePHP 5の設定
 - `cake5/config/app_local.php`: Redisキャッシュとセッションの設定
 
 ### セッションプレフィックス
 
-両方のアプリケーションで `cake_session_` というプレフィックスを使用しているため、セッションデータを共有できます。
+すべてのアプリケーションで `cake_session_` というプレフィックスを使用しているため、セッションデータを共有できます。
 
 ## セッションの動作確認
 
 ### CakePHP 2
 1. http://localhost:8080/session_test にアクセス
+2. ページをリロードすると訪問回数がカウントアップされます
+
+### CakePHP 3
+1. http://localhost:8082/session-test にアクセス
 2. ページをリロードすると訪問回数がカウントアップされます
 
 ### CakePHP 5
@@ -95,6 +113,7 @@ docker-compose down
 .
 ├── docker-compose.yml       # Docker Compose設定
 ├── Dockerfile               # CakePHP 2用Dockerfile
+├── Dockerfile.cake3         # CakePHP 3用Dockerfile
 ├── Dockerfile.cake5         # CakePHP 5用Dockerfile
 ├── cake2/                   # CakePHP 2.10.24
 │   ├── app/
@@ -102,6 +121,12 @@ docker-compose down
 │   │   ├── Controller/     # コントローラー
 │   │   └── View/           # ビュー
 │   └── lib/                # CakePHPライブラリ
+├── cake3/                   # CakePHP 3.10
+│   ├── config/             # 設定ファイル
+│   ├── src/                # ソースコード
+│   │   ├── Controller/     # コントローラー
+│   │   └── Template/       # テンプレート
+│   └── webroot/            # 公開ディレクトリ
 ├── cake5/                   # CakePHP 5.2
 │   ├── config/             # 設定ファイル
 │   ├── src/                # ソースコード
@@ -123,6 +148,14 @@ docker-compose down
 docker-compose exec web chmod -R 777 /var/www/html/app/tmp
 ```
 
+#### CakePHP 3
+`tmp` または `logs` ディレクトリのパーミッションエラーが発生した場合：
+
+```bash
+docker-compose exec cake3 chmod -R 775 /var/www/html/tmp
+docker-compose exec cake3 chmod -R 775 /var/www/html/logs
+```
+
 #### CakePHP 5
 `tmp` または `logs` ディレクトリのパーミッションエラーが発生した場合：
 
@@ -137,14 +170,24 @@ docker-compose exec cake5 chmod -R 775 /var/www/html/logs
 
 ```bash
 docker-compose exec web env | grep REDIS
+docker-compose exec cake3 env | grep REDIS
 docker-compose exec cake5 env | grep REDIS
 ```
+
+### CakePHP 3のセキュリティアドバイザリについて
+
+CakePHP 3は`laminas/laminas-diactoros`パッケージに既知のセキュリティアドバイザリがありますが、このプロジェクトでは開発/デモンストレーション環境であるため、`composer.json`の`audit.ignore`設定でこれらを無視しています。本番環境では適切なセキュリティ対策を行ってください。
 
 ## 技術詳細
 
 ### CakePHP 2のセッション設定
 - Redis拡張: phpredis 5.3.7
 - キャッシュエンジン: Redis
+- プレフィックス: `cake_session_`
+
+### CakePHP 3のセッション設定
+- Redis拡張: phpredis 5.3.7
+- キャッシュエンジン: RedisEngine
 - プレフィックス: `cake_session_`
 
 ### CakePHP 5のセッション設定
