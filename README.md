@@ -174,6 +174,10 @@ docker-compose exec cake3 env | grep REDIS
 docker-compose exec cake5 env | grep REDIS
 ```
 
+### CakePHP 3のセキュリティアドバイザリについて
+
+CakePHP 3は`laminas/laminas-diactoros`パッケージに既知のセキュリティアドバイザリがありますが、このプロジェクトでは開発/デモンストレーション環境であるため、`composer.json`の`audit.ignore`設定でこれらを無視しています。本番環境では適切なセキュリティ対策を行ってください。
+
 ## 技術詳細
 
 ### CakePHP 2のセッション設定
