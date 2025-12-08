@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     && update-ca-certificates \
     && docker-php-ext-install zip pdo pdo_mysql mysqli intl \
-    && docker-php-ext-configure intl
+    && docker-php-ext-configure intl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Redis extension
 RUN mkdir -p /usr/src/php/ext/redis \
@@ -19,6 +20,10 @@ RUN mkdir -p /usr/src/php/ext/redis \
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Fix CA certificates for Composer and curl
+RUN echo "curl.cainfo=/etc/ssl/certs/ca-certificates.crt" >> /usr/local/etc/php/conf.d/custom-php.ini && \
+    echo "openssl.cafile=/etc/ssl/certs/ca-certificates.crt" >> /usr/local/etc/php/conf.d/custom-php.ini
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
@@ -29,8 +34,12 @@ WORKDIR /var/www/html
 # Copy CakePHP 3 application
 COPY cake3 /var/www/html/
 
-# Install dependencies with Composer
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Copy entrypoint script
+COPY cake3-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/cake3-entrypoint.sh
+
+# Note: Composer dependencies will be installed at runtime via entrypoint script
+# This avoids SSL certificate issues during build
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/tmp \
@@ -50,5 +59,8 @@ RUN echo '<Directory ${APACHE_DOCUMENT_ROOT}>\n\
     Require all granted\n\
 </Directory>' > /etc/apache2/conf-available/cakephp.conf \
     && a2enconf cakephp
+
+# Set entrypoint
+ENTRYPOINT ["/usr/local/bin/cake3-entrypoint.sh"]
 
 EXPOSE 80
