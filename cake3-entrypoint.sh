@@ -5,7 +5,7 @@ set -e
 if [ ! -d "/var/www/html/vendor" ]; then
     echo "Installing Composer dependencies..."
     cd /var/www/html
-    composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=php --no-audit
+    composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=php
 fi
 
 # Set permissions
