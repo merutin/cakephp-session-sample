@@ -99,7 +99,7 @@ class PagesControllerTest extends IntegrationTestCase
     /**
      * Test that CSRF protection is applied to page rendering.
      *
-     * @reutrn void
+     * @return void
      */
     public function testCsrfAppliedError()
     {
@@ -112,7 +112,7 @@ class PagesControllerTest extends IntegrationTestCase
     /**
      * Test that CSRF protection is applied to page rendering.
      *
-     * @reutrn void
+     * @return void
      */
     public function testCsrfAppliedOk()
     {
